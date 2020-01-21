@@ -16,7 +16,8 @@ var views = {
   phrase_first_tokens_only:   require('./view/phrase_first_tokens_only'),
   boost_exact_matches:        require('./view/boost_exact_matches'),
   max_character_count_layer_filter:   require('./view/max_character_count_layer_filter'),
-  focus_point_filter:         require('./view/focus_point_distance_filter')
+  focus_point_filter:         require('./view/focus_point_distance_filter'),
+  phrase_first_tokens_only_multi_match: require('./view/phrase_first_tokens_only_multi_match')
 };
 
 // add abbrevations for the fields pelias/parser is able to detect.
@@ -32,7 +33,12 @@ var adminFields = placeTypes.concat(['locality_a', 'region_a', 'country_a']);
 // the name of the field to use.
 // this functionality is not enabled unless the 'input:add_name_to_multimatch'
 // variable is set to a non-empty value at query-time.
-adminFields = adminFields.concat(['add_name_to_multimatch']);
+adminFields = adminFields.concat([
+  'add_name_to_multimatch',
+  'add_name_hy_to_multimatch',
+  'add_name_en_to_multimatch',
+  'add_name_ru_to_multimatch',
+]);
 
 //------------------------------
 // autocomplete query
@@ -40,7 +46,8 @@ adminFields = adminFields.concat(['add_name_to_multimatch']);
 var query = new peliasQuery.layout.FilteredBooleanQuery();
 
 // mandatory matches
-query.score( views.phrase_first_tokens_only, 'must' );
+// query.score( views.phrase_first_tokens_only, 'must' );
+query.score( views.phrase_first_tokens_only_multi_match, 'must' );
 query.score( views.ngrams_last_token_only_multi( adminFields ), 'must' );
 
 // admin components
@@ -183,6 +190,7 @@ function generateQuery( clean ){
   let isAdminSet = adminFields.some(field => vs.isset('input:' + field));
   if ( isAdminSet ){ vs.var('input:add_name_to_multimatch', 'enabled'); }
 
+  console.log('skyfall ' + JSON.stringify(query.render(vs)));
   return {
     type: 'autocomplete',
     body: query.render(vs)
