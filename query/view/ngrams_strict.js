@@ -31,8 +31,8 @@ module.exports = function( vs ){
   ];
 
   vs.var(`multi_match:${view}:input`).set(vs.var('input:name').get()); 
-  vs.var(`multi_match:${view}:fields`).set(fields); 
-  vs.var(`multi_match:${view}:type`).set('best_fields'); 
+  vs.var(`multi_match:${view}:fields`).set(fields);
+  vs.var(`multi_match:${view}:type`).set('phrase_prefix');
   vs.var(`multi_match:${view}:analyzer`).set('peliasQuery');
   vs.var(`multi_match:${view}:slop`).set(3);
 

@@ -21,7 +21,7 @@ module.exports = function(vs) {
 
   vs.var(`multi_match:${view}:input`).set(tokens.join(' ')); 
   vs.var(`multi_match:${view}:fields`).set(fields); 
-  vs.var(`multi_match:${view}:type`).set('phrase'); 
+  vs.var(`multi_match:${view}:type`).set('phrase_prefix');
   vs.var(`multi_match:${view}:analyzer`).set('peliasQuery'); 
 
   return peliasQuery.view.leaf.multi_match(view)(vs);
