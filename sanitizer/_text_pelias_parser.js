@@ -1,8 +1,8 @@
 const logger = require('pelias-logger').get('api');
 const unicode = require('../helper/unicode');
-const Tokenizer = require('../../pelias-parser/tokenization/Tokenizer');
-const Solution = require('../../pelias-parser/solver/Solution');
-const AddressParser = require('../../pelias-parser/parser/AddressParser');
+const Tokenizer = require('pelias-parser/tokenization/Tokenizer');
+const Solution = require('pelias-parser/solver/Solution');
+const AddressParser = require('pelias-parser/parser/AddressParser');
 const parser = new AddressParser();
 const _ = require('lodash');
 const MAX_TEXT_LENGTH = 140;

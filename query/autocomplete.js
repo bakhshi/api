@@ -190,7 +190,6 @@ function generateQuery( clean ){
   let isAdminSet = adminFields.some(field => vs.isset('input:' + field));
   if ( isAdminSet ){ vs.var('input:add_name_to_multimatch', 'enabled'); }
 
-  console.log('skyfall ' + JSON.stringify(query.render(vs)));
   return {
     type: 'autocomplete',
     body: query.render(vs)
