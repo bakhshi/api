@@ -1,19 +1,28 @@
->This repository is part of the [Pelias](https://github.com/pelias/pelias)
->project. Pelias is an open-source, open-data geocoder originally sponsored by
->[Mapzen](https://www.mapzen.com/). Our official user documentation is
->[here](https://github.com/pelias/documentation).
+<p align="center">
+  <img height="100" src="https://raw.githubusercontent.com/pelias/design/master/logo/pelias_github/Github_markdown_hero.png">
+</p>
+<h3 align="center">A modular, open-source search engine for our world.</h3>
+<p align="center">Pelias is a geocoder powered completely by open data, available freely to everyone.</p>
+<p align="center">
+<a href="https://en.wikipedia.org/wiki/MIT_License"><img src="https://img.shields.io/github/license/pelias/api?style=flat&color=orange" /></a>
+<a href="https://hub.docker.com/u/pelias"><img src="https://img.shields.io/docker/pulls/pelias/api?style=flat&color=informational" /></a>
+<a href="https://gitter.im/pelias/pelias"><img src="https://img.shields.io/gitter/room/pelias/pelias?style=flat&color=yellow" /></a>
+</p>
+<p align="center">
+	<a href="https://github.com/pelias/docker">Local Installation</a> ·
+        <a href="https://geocode.earth">Cloud Webservice</a> ·
+	<a href="https://github.com/pelias/documentation">Documentation</a> ·
+	<a href="https://gitter.im/pelias/pelias">Community Chat</a>
+</p>
+<details open>
+<summary>What is Pelias?</summary>
+<br />
+Pelias is a search engine for places worldwide, powered by open data. It turns addresses and place names into geographic coordinates, and turns geographic coordinates into places and addresses. With Pelias, you’re able to turn your users’ place searches into actionable geodata and transform your geodata into real places.
+<br /><br />
+We think open data, open source, and open strategy win over proprietary solutions at any part of the stack and we want to ensure the services we offer are in line with that vision. We believe that an open geocoder improves over the long-term only if the community can incorporate truly representative local knowledge.
+</details>
 
 # Pelias API Server
-
-![License](https://img.shields.io/github/license/pelias/api?color=orange)
-[![Build Status](https://img.shields.io/travis/pelias/api)](https://travis-ci.org/pelias/api)
-[![Docker Pulls](https://img.shields.io/docker/pulls/pelias/api?color=informational)](https://hub.docker.com/r/pelias/api)
-[![Version](https://img.shields.io/npm/v/pelias-api?color=informational)](https://www.npmjs.com/package/pelias-api)
-[![Installs](https://img.shields.io/npm/dm/pelias-api?color=informational&label=npm%20install)](https://www.npmjs.com/package/pelias-api)
-![Commits](https://img.shields.io/github/commit-activity/m/pelias/api?color=success)
-![Last Commit](https://img.shields.io/github/last-commit/pelias/api?color=success)
-![Last Release](https://img.shields.io/github/release-date/pelias/api?color=success)
-[![Gitter](https://img.shields.io/gitter/room/pelias/pelias?color=yellow)](https://gitter.im/pelias/pelias)
 
 This is the API server for the Pelias project. It's the service that runs to process user HTTP requests and return results as GeoJSON by querying Elasticsearch and the other Pelias services.
 
@@ -43,6 +52,10 @@ The API ships with several convenience commands (runnable via `npm`):
   * `npm run config`: dump the configuration to the command line, which is useful for debugging configuration issues
 
 ## Configuration via pelias-config
+To run the API with your custom config, specify the location of the config file in the environment variable PELIAS_CONFIG like so:
+
+```PELIAS_CONFIG=/path/to/pelias.json npm run start```
+
 The API recognizes the following properties under the top-level `api` key in your `pelias.json` config file:
 
 |parameter|required|default|description|
@@ -52,11 +65,12 @@ The API recognizes the following properties under the top-level `api` key in you
 |`targets.auto_discover`|no|false|Should `sources` and `layers` be automatically discovered by querying elasticsearch at process startup. (See more info in the [Custom sources and layers](#custom-sources-and-layers) section below).
 |`targets.layers_by_source` <br> `targets.source_aliases` <br> `targets.layer_aliases`|no | |custom values for which `sources` and `layers` the API accepts (See more info in the [Custom sources and layers](#custom-sources-and-layers) section below). We recommend using the `targets.auto_discover:true` configuration instead of setting these manually.
 |`customBoosts` | no | `{}` | Allows configuring boosts for specific sources and layers, in order to influence result order. See [Configurable Boosts](#custom-boosts) below for details |
-|`autocomplete.exclude_address_length` | no | 0 | As a performance optimization, this optional parameter allows excluding address results for queries below the configured length. Addresses are usually the bulk of the records in Elasticsearch, and searching across all of them for very short text inputs can be slow, with little benefit. Consider setting this to 1 or 2 if you have several million addresses in Pelias. |
+|`autocomplete.exclude_address_length` | no | 0 | As a performance optimization, this optional filter excludes results from the 'address' layer for any queries where the character length of the 'subject' portion of the parsed_text is equal to or less than this many characters in length. Addresses are usually the bulk of the records in Elasticsearch, and searching across all of them for very short text inputs can be slow, with little benefit. Consider setting this to 1 or 2 if you have several million addresses in Pelias. |
 |`indexName`|*no*|*pelias*|name of the Elasticsearch index to be used when building queries|
 |`attributionURL`|no| (autodetected)|The full URL to use for the attribution link returned in all Pelias responses. Pelias will attempt to autodetect this host, but it will often be incorrect if, for example, there is a proxy between Pelias and its users. This parameter allows setting a specific URL to avoid any such issues|
 |`accessLog`|*no*||name of the format to use for access logs; may be any one of the [predefined values](https://github.com/expressjs/morgan#predefined-formats) in the `morgan` package. Defaults to `"common"`; if set to `false`, or an otherwise falsy value, disables access-logging entirely.|
 |`relativeScores`|*no*|true|if set to true, confidence scores will be normalized, realistically at this point setting this to false is not tested or desirable
+|`exposeInternalDebugTools`|*no*|true|Exposes several debugging tools, such as the ability to enable Elasticsearch explain mode, that may come at a performance cost or expose sensitive infrastructure details. Not recommended if the Pelias API is open to the public.
 
 A good starting configuration file includes this section (fill in the service and Elasticsearch hosts as needed):
 
@@ -255,10 +269,3 @@ $ curl localhost:9200/pelias/_count?pretty
 Travis tests every release against all supported Node.js versions.
 
 [![Build Status](https://travis-ci.org/pelias/api.png?branch=master)](https://travis-ci.org/pelias/api)
-
-
-### Versioning
-
-We rely on semantic-release and Greenkeeper to maintain our module and dependency versions.
-
-[![Greenkeeper badge](https://badges.greenkeeper.io/pelias/api.svg)](https://greenkeeper.io/)
