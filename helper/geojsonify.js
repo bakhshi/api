@@ -61,6 +61,18 @@ function geojsonifyPlace(params, place) {
     logger.warn(`doc ${doc.gid} does not contain name.default`);
   }
 
+  if (_.has(place, 'name.hy')) {
+    doc.nameHy = field.getStringValue(place.name.hy);
+  }
+
+  if (_.has(place, 'name.ru')) {
+    doc.nameRu = field.getStringValue(place.name.ru);
+  }
+
+  if (_.has(place, 'name.en')) {
+    doc.nameEn = field.getStringValue(place.name.en);
+  }
+
   // assign all the details info into the doc
   Object.assign(doc, collectDetails(params, place));
 
